@@ -6,9 +6,9 @@
  */
 
 #include "stm32l476xx.h"
-/*
-#include "systick.h"
 #include "LED.h"
+#include "systick.h"
+/*
 #include "buzzer.h"
 */
 
