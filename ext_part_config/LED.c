@@ -9,22 +9,21 @@
 #include "LED.h"
 
 /* Define macros for the pin numbers connected to external components */
-#define RED_LED 9
-#define YELLOW_LED 6
-#define GREEN_LED 7
+#define RED_LED		9	// PA5 presents conflict with on-board LED
+#define YELLOW_LED	6
+#define GREEN_LED	7
 
-// Initialization of GPIO Port A for LEDs
 void GPIOA_Initialization(void)
 {
 	// Enable GPIO Port A
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIOAEN;
 	// GPIO Mode to 'Output': Input(00), Output(01), AlterFunc(10), Analog(11)
-	GPIOA->MODER &= ~(0x3UL<<(2U*RED_LED));
-	GPIOA->MODER |= (0x1UL<<(2U*RED_LED));
-	GPIOA->MODER &= ~(0x3UL<<(2U*YELLOW_LED));
-	GPIOA->MODER |= (0x1UL<<(2U*YELLOW_LED));
-	GPIOA->MODER &= ~(0x3UL<<(2U*GREEN_LED));
-	GPIOA->MODER |= (0x1UL<<(2U*GREEN_LED));
+	GPIOA->MODER &= ~(0x3UL << (2U*RED_LED));
+	GPIOA->MODER |= (0x1UL << (2U*RED_LED));
+	GPIOA->MODER &= ~(0x3UL << (2U*YELLOW_LED));
+	GPIOA->MODER |= (0x1UL << (2U*YELLOW_LED));
+	GPIOA->MODER &= ~(0x3UL << (2U*GREEN_LED));
+	GPIOA->MODER |= (0x1UL << (2U*GREEN_LED));
 	// GPIO Output Type to 'Push-Pull': Output push-pull (0), Output open drain (1)
 	GPIOA->OTYPER |= 0UL<<(RED_LED);
 	GPIOA->OTYPER |= 0UL<<(YELLOW_LED);
@@ -39,20 +38,24 @@ void GPIOA_Initialization(void)
 // Modular function to turn on LED
 void turn_on_LED(uint32_t LED_PIN)
 {
-	// GPIOA->ODR |= 1 << LED_PIN;
-	GPIOA->BSRR |= 1 << LED_PIN;
+	GPIOA->ODR |= 1 << LED_PIN;
+	// GPIOA->BSRR |= 1 << LED_PIN;
 }
 
 // Modular function to turn off LED
 void turn_off_LED(uint32_t LED_PIN)
 {
-	// GPIOA->ODR &= ~(1 << LED_PIN);
-	GPIOA->BRR |= 1 << LED_PIN;
+	GPIOA->ODR &= ~(1 << LED_PIN);
+	// GPIOA->BRR |= 1 << LED_PIN;
 }
 
 // Modular function to toggle LED
-void toggle_LED(uint32_t LED_PIN) {GPIOA->ODR ^= (1 << LED_PIN);}
+void toggle_LED(uint32_t LED_PIN)
+{
+	GPIOA->ODR ^= (1 << LED_PIN);
+}
 
+/*
 // Function to switch which LED should be on
 void switch_LED(uint32_t NUM_IDEN)
 {
@@ -79,3 +82,4 @@ void switch_LED(uint32_t NUM_IDEN)
 		turn_on_LED(GREEN_LED);
 	}
 }
+*/
