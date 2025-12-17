@@ -44,7 +44,7 @@ void configure_EXTI_Buttons(void)
 	// Cleared by writing a 1 to this bit
 	EXTI->PR1 = ((1U << SET_BUTTON) | (1U << PED_BUTTON));
 	// Enabling & setting priority for NVIC EXTI15_10 interrupt
-	// NVIC_SetPriority(EXTI15_10_IRQn,2);
+	NVIC_SetPriority(EXTI15_10_IRQn,2);
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
@@ -91,8 +91,8 @@ void EXTI15_10_IRQHandler(void)
 			// GPIOA->BRR |= 1 << GREEN_LED;
 		}
 	}
-	else if (EXTI->PR1 & (1U << PED_BUTTON)) {
-		EXTI->PR1 = (1U << PED_BUTTON);   // clear pending register
+	else if (EXTI->PR1 & EXTI_PR1_PIF15) {
+		EXTI->PR1 = EXTI_PR1_PIF15;   // clear pending register
 		// Example: you *could* toggle a debug LED here if needed.
 		if ((GPIOC->IDR & (1 << PED_BUTTON)) == 0) {
 			toggle_LED(YELLOW_LED);
