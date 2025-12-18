@@ -63,17 +63,17 @@ void switch_LED(uint32_t NUM_IDEN)
 {
 	switch (NUM_IDEN)
 	{
-	case RED_LED: // When '1' is selected, the red light comes on
+	case 1: // When '1' is selected, the red light comes on
 		turn_on_LED(RED_LED);
 		turn_off_LED(YELLOW_LED);
 		turn_off_LED(GREEN_LED);
 		break;
-	case GREEN_LED: // When '2' is selected, the green light comes on
+	case 2: // When '2' is selected, the green light comes on
 		turn_off_LED(RED_LED);
 		turn_off_LED(YELLOW_LED);
 		turn_on_LED(GREEN_LED);
 		break;
-	case YELLOW_LED: // When '3' is selected, the yellow light comes on
+	case 3: // When '3' is selected, the yellow light comes on
 		turn_off_LED(RED_LED);
 		turn_on_LED(YELLOW_LED);
 		turn_off_LED(GREEN_LED);
