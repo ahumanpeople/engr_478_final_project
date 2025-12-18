@@ -25,20 +25,14 @@ void configure_EXTI_Buttons(void)
 	// Configure SYSCFG module to link EXTI12 to PC13
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
 	// GPIO Mode to 'Output': Input(00), Output(01), AlterFunc(10), Analog(11)
-	GPIOC->MODER &= ~(3U<<(13*2));
 	GPIOC->MODER &= ~(3U<<(2U*SET_BUTTON));
 	GPIOC->MODER &= ~(3U<<(2U*PED_BUTTON));
 	// Configure GPIO Pull-Up/Pull-Down to 'No Pull-up or Pull-down': No pull-up, pull-down (00), Pull-up (01), Pull-down (10), Reserved (11)
-	GPIOD->PUPDR &= ~(0x3UL<<(2U*13));
-	GPIOC->PUPDR |= 0UL<<(2U*13);
 	GPIOD->PUPDR &= ~(0x3UL<<(2U*SET_BUTTON));
 	GPIOD->PUPDR &= ~(0x3UL<<(2U*PED_BUTTON));
 	GPIOC->PUPDR |= 0UL<<(2U*SET_BUTTON);
 	GPIOC->PUPDR |= 0UL<<(2U*PED_BUTTON);
 	// Clear the relevant bits in SYSCFG's EXTICR4 register, and set EXTI sources for PC14 and PC15 and onboard button
-	uint32_t idx = (13U%4U)*4U;
-	SYSCFG->EXTICR[3] &= ~(0xFU<<idx);
-	SYSCFG->EXTICR[3] |= (0x2U<<idx); // 0x2 = Port C
 	uint32_t temp_set_button = (SET_BUTTON%4U)*4U;
 	uint32_t temp_ped_button = (PED_BUTTON%4U)*4U;
 	SYSCFG->EXTICR[3] &= ~(0xFU<<temp_set_button);
@@ -46,43 +40,23 @@ void configure_EXTI_Buttons(void)
 	SYSCFG->EXTICR[3] |= (0x2U<<temp_set_button); // 0x2U = Port C
 	SYSCFG->EXTICR[3] |= (0x2U<<temp_ped_button);
 	// Enable interrupt trigger for both falling and rising edges
-	EXTI->RTSR1 &= ~(1U<<13);	// Rising trigger selection register (RTSR):0 = disabled, 1 = enabled
-	EXTI->FTSR1 |= (1U<<13);	// Falling trigger selection register (FTSR): 0 = disabled, 1 = enabled
-	EXTI->RTSR1 &= ~(1U << SET_BUTTON);
-	EXTI->RTSR1 &= ~(1U << PED_BUTTON);
+	EXTI->RTSR1 &= ~(1U << SET_BUTTON);	// Rising trigger selection register (RTSR):0 = disabled, 1 = enabled
+	EXTI->RTSR1 &= ~(1U << PED_BUTTON);	// Falling trigger selection register (FTSR): 0 = disabled, 1 = enabled
 	EXTI->FTSR1 |= (1U << SET_BUTTON);
 	EXTI->FTSR1 |= (1U << PED_BUTTON);
 	// Enable (unmask) the EXTI13 interrupt
-	EXTI->IMR1 |= (1U<<13);
 	EXTI->IMR1 |= (1U << SET_BUTTON);
 	EXTI->IMR1 |= (1U << PED_BUTTON);
 	// Cleared by writing a 1 to this bit
-	EXTI->PR1 = (1U<<13);
 	EXTI->PR1 = (1U << SET_BUTTON);
 	EXTI->PR1 = (1U << PED_BUTTON);
 	// Enabling & prioritizing EXTI15_10 interrupt
-	// NVIC_SetPriority(EXTI15_10_IRQn,2);
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 // Interrupt handler for pedestrian button
 void EXTI15_10_IRQHandler(void)
 {
-	/*
-	// Reads to check if EXTI13 is triggered
-	if (EXTI->PR1 & (1U<<13))
-	{
-		EXTI->PR1 = (1U<<13);	// Clears pending register for EXTI13
-		// Software debounce (adds delay to ignore bounce)
-		// for (volatile uint32_t i = 0; i < 20000; ++i) { __NOP(); }
-		// If the button is still pressed...
-		if ((GPIOC->IDR & (1U<<13)) == 0)
-		{
-			toggle_LED(GREEN_LED);
-			// GPIOA->BRR |= 1 << GREEN_LED;
-		}
-	}
-	*/
 	if (EXTI->PR1 & (1U << PED_BUTTON)) {
 		EXTI->PR1 = (1U << PED_BUTTON);   // clear pending register
 		// Software debounce (adds delay to ignore bounce)
