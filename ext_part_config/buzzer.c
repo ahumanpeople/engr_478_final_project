@@ -18,6 +18,7 @@ void GPIOD_Initialization(void)
 	RCC->AHB2ENR |= RCC_AHB2ENR_GPIODEN;
 	// GPIO Mode to 'Output': Input(00), Output(01), AlterFunc(10), Analog(11)
 	GPIOD->MODER &= ~(0x3UL<<(2U*BUZZER));
+	GPIOD->MODER |= (0x1UL << (2U*BUZZER));
 	// GPIO Output Type to 'Push-Pull': Output push-pull (0), Output open drain (1)
 	GPIOD->OTYPER |= 0UL<<(BUZZER);
 	// GPIO Pull-Up/Pull-Down to 'No Pull-up or Pull-down': No pull-up, pull-down (00), Pull-up (01), Pull-down (10), Reserved (11)
