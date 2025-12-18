@@ -9,8 +9,7 @@
 #include "ADC.h"
 #include "button.h"
 // #include "systick.h"
-// #include "buzzer.h"
-// #include "poten.h"
+#include "buzzer.h"
 
 /* Define macros for the pin numbers connected to external components */
 #define RED_LED		9	// PA5 presents conflict with on-board LED
@@ -28,91 +27,33 @@ volatile uint32_t adc_input = 0;
 int main(void)
 {
 	GPIOA_Initialization();
-	// GPIOB_Initialization();
 	configure_EXTI_Buttons();
-	// EXTI15_10_IRQHandler();
-	// GPIOD_Initialization();
+	GPIOD_Initialization();
 
 	// SysTick_Init(4000000);
 
 
 	ADC_Init();
 	ADC1->CR |= ADC_CR_ADSTART;
-	volatile uint32_t last_raw = 0;
+	volatile uint32_t last_raw_value = 0;
+	volatile uint32_t raw_poten_value = 0; // max value is 4095.0 --> 0 to 4096
 
 	while (1) {
-	    uint32_t raw = adc_result;
-	    if (raw != last_raw) {            // change detector
-	        last_raw = raw;
-	        // temporary: gate LEDs off if below mid-scale to see movement
-	        if (raw < 2750) {
-	            turn_on_LED(RED_LED);
-	            turn_off_LED(YELLOW_LED);
-	            turn_off_LED(GREEN_LED);
-	        } else {
-	            turn_on_LED(YELLOW_LED);
-	            turn_off_LED(RED_LED);
-	            turn_off_LED(GREEN_LED);
-	        }
-	        // set a breakpoint here; inspect 'raw'
-	    }
-	}
-
-	/*
-	while(1) // while loop is true; infinite loop
-	{
-		float raw_poten_data = adc_result;
+		raw_poten_value = adc_result;
 		// float adjusted_poten = ((raw_poten_data) / (4095.0f))*3.0f;
 		// if (adjusted_poten >= 2.0f)
-		if (raw_poten_data >= 2730)
-		{
-			turn_on_LED(YELLOW_LED);
-		}
-		// else if (adjusted_poten <= 1.0f)
-		else if (raw_poten_data <= 1370)
-		{
-			turn_on_LED(RED_LED);
-		}
-		else
-		{
-			turn_on_LED(GREEN_LED);
-		}
-	}
-	*/
-
-
-	/*
-	volatile uint32_t last_raw = 0;
-
-	while (1) {
-	    uint32_t raw = adc_result;
-	    if (raw != last_raw) {            // change detector
-	        last_raw = raw;
+	    if (raw_poten_value != last_raw_value) {            // change detector
+	        last_raw_value = raw_poten_value;
 	        // temporary: gate LEDs off if below mid-scale to see movement
-	        if (raw < 620) {
-	            turn_on_LED(RED_LED);
-	            turn_off_LED(YELLOW_LED);
-	            turn_off_LED(GREEN_LED);
-	        } else {
-	            turn_on_LED(YELLOW_LED);
-	            turn_off_LED(RED_LED);
-	            turn_off_LED(GREEN_LED);
+	        if (raw_poten_value >= 2048)
+	        {
+	            switch_LED(1);
 	        }
-	        // set a breakpoint here; inspect 'raw'
+	        else if (raw_poten_value < 2048)
+	        {
+	            switch_LED(3);
+	            GPIOD->ODR ^= (1U << BUZZER);
+	        }
 	    }
 	}
-	*/
-
-
-	/*
-	ADC1->IER &= ~ADC_IER_EOC;            // disable EOC IRQ temporarily
-	ADC1->CR  |= ADC_CR_ADSTART;
-
-	while (1) {
-	    if (ADC1->ISR & ADC_ISR_EOC) {    // poll EOC
-	        adc_result = ADC1->DR;        // read the sample
-	    }
-	    turn_on_LED(GREEN_LED);
-	}
-	*/
 }
