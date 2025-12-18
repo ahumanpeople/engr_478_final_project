@@ -13,4 +13,4 @@
 // Initialization of GPIO Port D for the buzzer
 void GPIOD_Initialization(void);
 
-#endif /* BUZZER_H_ */
+#endif /* BUZZER_H_*/
