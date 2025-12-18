@@ -5,6 +5,7 @@
  *      Author: josebarrios
  */
 
+/* Include all necessary header files */
 #include "stm32l476xx.h"
 #include "LED.h"
 
@@ -13,6 +14,7 @@
 #define YELLOW_LED	6
 #define GREEN_LED	7
 
+// Initialization of GPIO Port A for LEDs
 void GPIOA_Initialization(void)
 {
 	// Enable GPIO Port A
@@ -38,15 +40,15 @@ void GPIOA_Initialization(void)
 // Modular function to turn on LED
 void turn_on_LED(uint32_t LED_PIN)
 {
-	GPIOA->ODR |= 1 << LED_PIN;
-	// GPIOA->BSRR |= 1 << LED_PIN;
+	// GPIOA->ODR |= 1 << LED_PIN;
+	GPIOA->BSRR |= 1 << LED_PIN;
 }
 
 // Modular function to turn off LED
 void turn_off_LED(uint32_t LED_PIN)
 {
-	GPIOA->ODR &= ~(1 << LED_PIN);
-	// GPIOA->BRR |= 1 << LED_PIN;
+	// GPIOA->ODR &= ~(1 << LED_PIN);
+	GPIOA->BRR |= 1 << LED_PIN;
 }
 
 // Modular function to toggle LED
@@ -55,23 +57,23 @@ void toggle_LED(uint32_t LED_PIN)
 	GPIOA->ODR ^= (1 << LED_PIN);
 }
 
-/*
+
 // Function to switch which LED should be on
 void switch_LED(uint32_t NUM_IDEN)
 {
 	switch (NUM_IDEN)
 	{
-	case 1: // When '1' is selected, the red light comes on
+	case RED_LED: // When '1' is selected, the red light comes on
 		turn_on_LED(RED_LED);
 		turn_off_LED(YELLOW_LED);
 		turn_off_LED(GREEN_LED);
 		break;
-	case 2: // When '2' is selected, the green light comes on
+	case GREEN_LED: // When '2' is selected, the green light comes on
 		turn_off_LED(RED_LED);
 		turn_off_LED(YELLOW_LED);
 		turn_on_LED(GREEN_LED);
 		break;
-	case 3: // When '3' is selected, the yellow light comes on
+	case YELLOW_LED: // When '3' is selected, the yellow light comes on
 		turn_off_LED(RED_LED);
 		turn_on_LED(YELLOW_LED);
 		turn_off_LED(GREEN_LED);
@@ -82,4 +84,3 @@ void switch_LED(uint32_t NUM_IDEN)
 		turn_on_LED(GREEN_LED);
 	}
 }
-*/
