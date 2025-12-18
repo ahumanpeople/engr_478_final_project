@@ -9,14 +9,11 @@
 #define BUTTON_H_
 
 #include "stm32l476xx.h"
+#include "LED.h"
 
+// Initialization of GPIO Port C for push buttons
 void configure_EXTI_Buttons(void);
 
-void EXTI13_IRQHandler(void);
-
-void EXTI14_IRQHandler(void);
-
-// Initialization of GPIO Port C for the buttons
-void GPIOC_Initialization(void);
+void EXTI15_10_IRQHandler(void);
 
 #endif /* BUTTON_H_ */
